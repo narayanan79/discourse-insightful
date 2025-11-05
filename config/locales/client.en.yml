@@ -1,0 +1,32 @@
+en:
+  js:
+    post:
+      controls:
+        insightful: "Mark as insightful"
+        undo_insightful: "Unmark as insightful"
+        has_insightfuled: "Marked as insightful"
+        insightful_count:
+          one: "%{count} person marked this as insightful"
+          other: "%{count} people marked this as insightful"
+        who_insightfuled: "Who marked this as insightful"
+      has_insightfuls_title: "%{count} people marked this as insightful"
+      has_insightfuls_title_only_you: "You marked this as insightful"
+      has_insightfuls_title_you: "You and %{count} other people marked this as insightful"
+      sr_post_insightful_count_button:
+        one: "%{count} person marked this as insightful"
+        other: "%{count} people marked this as insightful"
+      actions:
+        people:
+          insightful: "people who marked this as insightful"
+          insightful_capped: "and %{count} others who marked this as insightful"
+      insightful:
+        title: "Mark as Insightful"
+        help: "Mark this post as insightful"
+        long_form: "marked this as insightful"
+        cant_revoke: "You cannot revoke this action"
+        cant_act: "You cannot mark this post as insightful"
+    insightful:
+      title: "Insightful"
+      description: "Mark posts as insightful"
+    insightful_received: "Received"
+    insightful_given: "Given"

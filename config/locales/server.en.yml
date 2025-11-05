@@ -1,0 +1,18 @@
+en:
+  site_settings:
+    insightful_enabled: "Enable insightful button"
+    insightful_max_per_day: "Maximum insightful actions per day"
+    insightful_min_trust_level: "Minimum trust level for insightful"
+    insightful_show_who_actioned: "Show who marked posts as insightful"
+
+  post_action_types:
+    insightful: "insightful"
+
+  activerecord:
+    attributes:
+      post_action_type:
+        insightful: "Insightful"
+
+  insightful:
+    errors:
+      timeout: "The Insightful reaction was created too long ago. It can no longer be modified or removed."

@@ -1,0 +1,255 @@
+// User summary stats page - insightful icon color
+.stats-insightful-given,
+.stats-insightful-received {
+  .user-stat .d-icon {
+    color: var(--gold) !important;
+  }
+}
+
+// User summary insightful sections - user interaction lists
+.most-insightful-section {
+  .summary-user-list {
+    // Style the lightbulb icons in user interaction lists
+    .d-icon-lightbulb {
+      color: var(--gold) !important;
+    }
+
+    // Style section titles with gold accent
+    h3 {
+      color: var(--primary);
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 0.25em;
+    }
+
+    // Add subtle gold background to user items
+    .user-summary-user {
+      &:hover {
+        background-color: var(--tertiary-low);
+        border-radius: var(--d-border-radius);
+      }
+    }
+  }
+
+  // Specific styling for insightful-related sections
+  .insightful-received-by-section,
+  .insightful-given-section {
+    .user-summary-user .d-icon-lightbulb {
+      color: var(--gold) !important;
+      filter: drop-shadow(0 0 1px var(--tertiary-low));
+    }
+  }
+}
+
+// Insightful button styling with different states
+.post-action-menu__insightful-count,
+.post-action-menu__insightful {
+  // Outline state (not insightfuled) - default clickable state
+  &.insightful {
+    .d-icon {
+      color: var(--primary-medium) !important;
+    }
+
+    &:hover {
+      background: var(--tertiary-low);
+      .d-icon {
+        color: var(--gold);
+      }
+    }
+  }
+
+  // Solid state (insightfuled by someone else)
+  &.has-insightful {
+    .d-icon {
+      color: var(--primary);
+    }
+
+    .discourse-no-touch & {
+      &:hover {
+        background: var(--primary-low);
+        .d-icon {
+          color: var(--primary-medium);
+        }
+      }
+    }
+  }
+
+  // Colored solid state (insightfuled by logged user, within 15 min timeout)
+  &.has-insightful.insightful-by-me {
+    .d-icon {
+      color: var(--gold);
+    }
+
+    &:hover {
+      background: var(--tertiary-low);
+      .d-icon {
+        color: var(--gold);
+      }
+    }
+  }
+
+  // Disabled state (cannot undo after 15 minute timeout)
+  &.has-insightful:not(.insightful-by-me) {
+    cursor: default;
+    opacity: 0.7;
+
+    .d-icon {
+      color: var(--primary-medium);
+    }
+
+    &:hover {
+      background: transparent;
+      .d-icon {
+        color: var(--primary-medium);
+      }
+    }
+  }
+}
+
+// Animation for check button
+@keyframes checkBump {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.post-action-menu__insightful.toggle-insightful.check-animation .d-icon {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: checkBump 0.3s ease-in-out;
+  }
+}
+
+// Insightful count styling (following like button pattern)
+.post-action-menu__insightful-count {
+  &.my-insightfuls {
+    color: var(--gold);
+  }
+
+  &.regular-insightfuls {
+    color: var(--primary-medium);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.discourse-insightful-button {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  border-radius: var(--d-post-control-border-radius);
+  position: relative; // For absolute positioning of child elements
+
+  &:hover {
+    background-color: var(--primary-low);
+  }
+
+  .insightful-count {
+    padding: 8px 0 8px 10px;
+    font-size: var(--font-up-1);
+    color: var(--primary-low-mid);
+    display: flex;
+    pointer-events: auto; // Enable pointer events so count can be clicked
+    cursor: pointer;
+  }
+}
+
+// Container positioning for floating elements
+.double-button {
+  position: relative;
+}
+
+// Styling for the who-insightfuled avatar list (floating popup like who-liked)
+.who-insightfuled {
+  position: absolute;
+  z-index: 1000;
+  background: var(--secondary);
+  border: 1px solid var(--primary-low);
+  border-radius: var(--d-border-radius);
+  box-shadow: var(--shadow-dropdown);
+  padding: 0.5em;
+  margin-top: 0.25em;
+  min-width: 200px;
+  top: 26px;
+  display: none;
+
+  &.--expanded {
+    margin-top: 0.5em;
+    display: block;
+  }
+
+  .small-user-list-content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25em;
+    justify-content: start;
+  }
+
+  .trigger-user-card {
+    display: inline-block;
+  }
+
+  .list-description {
+    color: var(--primary-medium);
+    font-size: var(--font-down-1);
+    margin-left: 0.5em;
+  }
+}
+
+.discourse-no-touch
+  nav.post-controls
+  .actions
+  .double-button
+  .discourse-insightful-button
+  button.button-count {
+  padding-right: 10px;
+
+  &:hover {
+    background-color: var(--primary-low-mid);
+  }
+}
+
+// Directory table column header icons for insightful columns
+.directory-table__column-header,
+.table-header-toggle {
+  // Color the lightbulb icon in insightful columns
+  .d-icon-lightbulb {
+    color: var(--gold) !important;
+
+    // Add a subtle glow effect for visual emphasis
+    filter: drop-shadow(0 0 2px var(--tertiary-low));
+  }
+
+  // Hover state for insightful column headers
+  &:hover {
+    .d-icon-lightbulb {
+      color: var(--gold-hover) !important;
+      filter: drop-shadow(0 0 3px var(--tertiary-low));
+    }
+  }
+}
+
+// Alternative selector for more specificity if needed
+.users-directory .directory-table .d-icon-lightbulb,
+.responsive-table .d-icon-lightbulb {
+  color: var(--gold) !important;
+  filter: drop-shadow(0 0 2px var(--tertiary-low));
+
+  // Smooth transitions
+  transition:
+    color 0.2s ease,
+    filter 0.2s ease;
+}

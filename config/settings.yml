@@ -1,0 +1,24 @@
+plugins:
+  insightful_enabled:
+    type: bool
+    default: true
+    client: true
+    description: "Enable the insightful button feature"
+  
+  insightful_max_per_day:
+    type: integer
+    default: 50
+    client: false
+    description: "Maximum number of insightful actions per user per day"
+  
+  insightful_min_trust_level:
+    type: integer
+    default: 0
+    client: false
+    description: "Minimum trust level required to use insightful button"
+    
+  insightful_show_who_actioned:
+    type: bool
+    default: true
+    client: true
+    description: "Show who marked posts as insightful"
