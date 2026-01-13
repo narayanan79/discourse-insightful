@@ -4,7 +4,7 @@
 # about: Adds an insightful button next to the like button, allowing users to mark posts as insightful
 # version: 1.0.0
 # authors: Discourse Team
-# url: https://github.com/discourse/discourse-insightful
+# url: https://github.com/narayanan79/discourse-insightful
 # required_version: 3.5.0.beta8-dev
 
 enabled_site_setting :insightful_enabled
@@ -26,6 +26,7 @@ after_initialize do
     get "/insightful/:post_id/who" => "insightful#who_actioned"
   end
 
+  require_relative "lib/insightful_cache_helper.rb"
   require_relative "lib/insightful_daily.rb"
   require_relative "lib/insightful_action_creator.rb"
   require_relative "lib/insightful_action_destroyer.rb"
@@ -197,4 +198,10 @@ after_initialize do
         AND di.period_type = :period_type
         AND di.insightful_given <> insightful_stats.insightful_given_count
     SQL
+
+  # Scheduled job to clean up old daily tracking records
+  # Runs once per day at midnight to remove records older than 90 days
+  every :day, at: 0.hours do
+    InsightfulDaily.cleanup_old_records(90)
+  end
 end

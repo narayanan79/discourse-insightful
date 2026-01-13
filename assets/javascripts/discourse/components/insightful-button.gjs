@@ -13,7 +13,7 @@ import { ajax } from "discourse/lib/ajax";
 import { extractError } from "discourse/lib/ajax-error";
 import discourseLater from "discourse/lib/later";
 import { i18n } from "discourse-i18n";
-import { and, eq } from "truth-helpers";
+import { and, eq, not } from "truth-helpers";
 
 export default class InsightfulButton extends Component {
   static shouldRender(args) {
@@ -344,14 +344,25 @@ export default class InsightfulButton extends Component {
 }
 
 class InsightfulCount extends Component {
+  @service siteSettings;
+
   // No icon in count - only show the number like the like button
 
   get actioned() {
     return this.args.actioned !== undefined ? this.args.actioned : this.args.post.insightfuled;
   }
-  
+
   get insightfulCount() {
     return this.args.insightfulCount !== undefined ? this.args.insightfulCount : this.args.post.insightful_count;
+  }
+
+  /**
+   * Checks if the "who actioned" feature is enabled.
+   *
+   * @returns {boolean} Whether users can click to see who marked as insightful
+   */
+  get canShowWhoInsightful() {
+    return this.siteSettings.insightful_show_who_actioned;
   }
 
   get translatedTitle() {
@@ -373,8 +384,17 @@ class InsightfulCount extends Component {
     });
   }
 
+  /**
+   * Handles click on the count to toggle the user list.
+   * Only works if insightful_show_who_actioned setting is enabled.
+   */
   @action
   toggleWhoActioned() {
+    // Don't do anything if the setting is disabled
+    if (!this.canShowWhoInsightful) {
+      return;
+    }
+
     if (this.args.action) {
       this.args.action();
     }
@@ -389,12 +409,14 @@ class InsightfulCount extends Component {
           "button-count"
           "highlight-action"
           (if this.actioned "my-insightfuls" "regular-insightfuls")
+          (if (not this.canShowWhoInsightful) "who-insightful-disabled")
         }}
         ...attributes
         title={{this.translatedTitle}}
-        {{on "click" this.toggleWhoActioned}}
+        {{(if this.canShowWhoInsightful (modifier on "click" this.toggleWhoActioned))}}
         type="button"
         aria-pressed={{@isWhoActionedVisible}}
+        disabled={{not this.canShowWhoInsightful}}
       >
         {{this.insightfulCount}}
       </button>

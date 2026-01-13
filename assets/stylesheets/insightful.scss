@@ -133,6 +133,19 @@
   &.regular-insightfuls {
     color: var(--primary-medium);
   }
+
+  // Disabled state when insightful_show_who_actioned is false
+  &.who-insightful-disabled {
+    cursor: default !important;
+    pointer-events: none;
+    opacity: 1; // Keep it visible, just not clickable
+  }
+
+  &[disabled] {
+    cursor: default !important;
+    pointer-events: none;
+    opacity: 1;
+  }
 }
 
 @keyframes spin {

@@ -12,27 +12,34 @@ class InsightfulDaily < ActiveRecord::Base
   def self.increment_for(user_id)
     date = Date.current
 
-    daily_record =
-      find_or_create_by(user_id: user_id, insightful_date: date) do |record|
-        record.insightful_count = 0
-      end
+    # Use atomic SQL update to prevent race conditions
+    result = where(user_id: user_id, insightful_date: date)
+      .update_all("insightful_count = insightful_count + 1")
 
-    daily_record.increment!(:insightful_count)
-    daily_record
-  rescue ActiveRecord::RecordNotUnique
-    # Handle race condition
-    retry
+    # If no record was updated, create one
+    if result == 0
+      begin
+        create!(user_id: user_id, insightful_date: date, insightful_count: 1)
+      rescue ActiveRecord::RecordNotUnique
+        # Another thread created it, retry the update
+        retry
+      end
+    end
+
+    # Return the record (optional, for backward compatibility)
+    find_by(user_id: user_id, insightful_date: date)
   end
 
   def self.decrement_for(user_id)
     date = Date.current
 
-    daily_record = find_by(user_id: user_id, insightful_date: date)
+    # Use atomic SQL update with GREATEST to prevent negative counts
+    where(user_id: user_id, insightful_date: date)
+      .where("insightful_count > 0")
+      .update_all("insightful_count = insightful_count - 1")
 
-    return unless daily_record && daily_record.insightful_count > 0
-
-    daily_record.decrement!(:insightful_count)
-    daily_record
+    # Return the record (optional, for backward compatibility)
+    find_by(user_id: user_id, insightful_date: date)
   end
 
   def self.count_for(user_id, date = Date.current)

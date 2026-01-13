@@ -68,15 +68,7 @@ class InsightfulActionCreator
     InsightfulDaily.increment_for(guardian.user.id)
 
     # Invalidate user summary cache to ensure stats show up immediately
-    giver_cache_key = "user_summary:#{guardian.user.id}:#{guardian.user.id}"
-    receiver_cache_key = "user_summary:#{post.user.id}:#{post.user.id}"
-    public_giver_cache_key = "user_summary:#{guardian.user.id}:0"
-    public_receiver_cache_key = "user_summary:#{post.user.id}:0"
-
-    Discourse.cache.delete(giver_cache_key)
-    Discourse.cache.delete(receiver_cache_key)
-    Discourse.cache.delete(public_giver_cache_key)
-    Discourse.cache.delete(public_receiver_cache_key)
+    InsightfulCacheHelper.invalidate_user_summary_cache(guardian.user.id, post.user.id)
 
     # Note: UserAction records are created by the :post_action_created event listener in plugin.rb
     # to avoid duplication and maintain single source of truth
