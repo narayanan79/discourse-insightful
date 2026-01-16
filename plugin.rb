@@ -31,6 +31,12 @@ after_initialize do
   require_relative "lib/insightful_action_creator.rb"
   require_relative "lib/insightful_action_destroyer.rb"
 
+  # Add UserAction constants for insightful actions
+  reloadable_patch do |plugin|
+    UserAction::INSIGHTFUL_GIVEN = 20 unless UserAction.const_defined?(:INSIGHTFUL_GIVEN)
+    UserAction::INSIGHTFUL_RECEIVED = 21 unless UserAction.const_defined?(:INSIGHTFUL_RECEIVED)
+  end
+
   # Add post action type for insightful using reloadable_patch
   reloadable_patch { |plugin| PostActionType.types[:insightful] = 51 }
 
