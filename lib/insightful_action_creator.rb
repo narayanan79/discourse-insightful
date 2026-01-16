@@ -70,8 +70,23 @@ class InsightfulActionCreator
     # Invalidate user summary cache to ensure stats show up immediately
     InsightfulCacheHelper.invalidate_user_summary_cache(guardian.user.id, post.user.id)
 
-    # Note: UserAction records are created by the :post_action_created event listener in plugin.rb
-    # to avoid duplication and maintain single source of truth
+    # Create UserAction records for both the giver and receiver
+    # This is necessary for custom action types as PostActionCreator doesn't do this automatically
+    UserAction.log_action!(
+      action_type: UserAction::INSIGHTFUL_GIVEN,
+      user_id: guardian.user.id,
+      acting_user_id: guardian.user.id,
+      target_post_id: post.id,
+      target_topic_id: post.topic_id,
+    )
+
+    UserAction.log_action!(
+      action_type: UserAction::INSIGHTFUL_RECEIVED,
+      user_id: post.user.id,
+      acting_user_id: guardian.user.id,
+      target_post_id: post.id,
+      target_topic_id: post.topic_id,
+    )
 
     true
   rescue => e

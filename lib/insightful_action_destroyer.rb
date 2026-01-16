@@ -47,8 +47,23 @@ class InsightfulActionDestroyer
     # Invalidate user summary cache to ensure stats show up immediately
     InsightfulCacheHelper.invalidate_user_summary_cache(guardian.user.id, post.user.id)
 
-    # Note: UserAction records are removed by the :post_action_destroyed event listener in plugin.rb
-    # to avoid duplication and maintain single source of truth
+    # Remove UserAction records for both the giver and receiver
+    UserAction
+      .where(
+        action_type: UserAction::INSIGHTFUL_GIVEN,
+        user_id: guardian.user.id,
+        target_post_id: post.id,
+      )
+      .destroy_all
+
+    UserAction
+      .where(
+        action_type: UserAction::INSIGHTFUL_RECEIVED,
+        user_id: post.user.id,
+        target_post_id: post.id,
+        acting_user_id: guardian.user.id,
+      )
+      .destroy_all
 
     true
   rescue => e
