@@ -14,6 +14,7 @@ register_asset "stylesheets/insightful.scss"
 
 # Register custom SVG icons
 register_svg_icon "lightbulb"
+register_svg_icon "inbox"
 
 after_initialize do
   # Require controller

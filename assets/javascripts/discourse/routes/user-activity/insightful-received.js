@@ -17,7 +17,7 @@ export default class UserActivityInsightfulReceived extends UserActivityStreamRo
         });
     const body = htmlSafe(
       i18n("user_activity.no_insightful_received_body", {
-        icon: iconHTML("certificate"),
+        icon: iconHTML("inbox"),
       })
     );
 

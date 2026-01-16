@@ -22,7 +22,7 @@ export default class InsightfulActivityLinks extends Component {
         @ariaCurrentContext="subNav"
         class="user-nav__activity-insightful-received"
       >
-        {{icon "certificate"}}
+        {{icon "inbox"}}
         <span>{{i18n "user_action_groups.21"}}</span>
       </DNavigationItem>
     {{/if}}
