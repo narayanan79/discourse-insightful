@@ -30,6 +30,12 @@ after_initialize do
   require_relative "lib/insightful_daily.rb"
   require_relative "lib/insightful_action_creator.rb"
   require_relative "lib/insightful_action_destroyer.rb"
+  require_relative "lib/user_summary_extension.rb"
+
+  # Extend UserSummary to add insightful stats
+  reloadable_patch do |plugin|
+    ::UserSummary.prepend(DiscourseInsightful::UserSummaryExtension)
+  end
 
   # Add UserAction constants for insightful actions
   reloadable_patch do |plugin|
