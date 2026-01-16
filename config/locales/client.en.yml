@@ -1,32 +1,35 @@
 en:
   js:
+    user_action_groups:
+      "20": "Insightful Given"
+      "21": "Insightful Received"
+
+    user:
+      summary:
+        insightful_given:
+          one: "insightful given"
+          other: "insightful given"
+        insightful_received:
+          one: "insightful received"
+          other: "insightful received"
+
     post:
       controls:
-        insightful: "Mark as insightful"
-        undo_insightful: "Unmark as insightful"
-        has_insightfuled: "Marked as insightful"
-        insightful_count:
-          one: "%{count} person marked this as insightful"
-          other: "%{count} people marked this as insightful"
-        who_insightfuled: "Who marked this as insightful"
-      has_insightfuls_title: "%{count} people marked this as insightful"
+        insightful: "Mark as Insightful"
+        undo_insightful: "Undo Insightful"
+        has_insightfuled: "You've marked this as insightful"
+
+      has_insightfuls_title:
+        one: "{{count}} person marked this as insightful"
+        other: "{{count}} people marked this as insightful"
       has_insightfuls_title_only_you: "You marked this as insightful"
-      has_insightfuls_title_you: "You and %{count} other people marked this as insightful"
-      sr_post_insightful_count_button:
-        one: "%{count} person marked this as insightful"
-        other: "%{count} people marked this as insightful"
+      has_insightfuls_title_you:
+        one: "You and {{count}} other person marked this as insightful"
+        other: "You and {{count}} other people marked this as insightful"
+
       actions:
         people:
-          insightful: "people who marked this as insightful"
-          insightful_capped: "and %{count} others who marked this as insightful"
-      insightful:
-        title: "Mark as Insightful"
-        help: "Mark this post as insightful"
-        long_form: "marked this as insightful"
-        cant_revoke: "You cannot revoke this action"
-        cant_act: "You cannot mark this post as insightful"
-    insightful:
-      title: "Insightful"
-      description: "Mark posts as insightful"
-    insightful_received: "Received"
-    insightful_given: "Given"
+          insightful: "marked this as insightful"
+          insightful_capped:
+            one: "and {{count}} other marked this as insightful"
+            other: "and {{count}} others marked this as insightful"
