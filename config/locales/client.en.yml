@@ -13,6 +13,14 @@ en:
           one: "insightful received"
           other: "insightful received"
 
+    user_activity:
+      no_insightful_given_title: "You haven't marked any posts as insightful yet"
+      no_insightful_given_title_others: "%{username} hasn't marked any posts as insightful yet"
+      no_insightful_given_body: "Mark posts as insightful using the %{icon} button when they provide valuable insights."
+      no_insightful_received_title: "No posts marked as insightful for you"
+      no_insightful_received_title_others: "No posts marked as insightful for %{username}"
+      no_insightful_received_body: "When others mark your posts as insightful, they'll appear here."
+
     post:
       controls:
         insightful: "Mark as Insightful"
