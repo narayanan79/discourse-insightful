@@ -26,7 +26,7 @@ export default class InsightfulStats extends Component {
             <UserStat
               @value={{@outletArgs.model.insightful_received}}
               @label="user.summary.insightful_received.other"
-              @icon="certificate"
+              @icon="lightbulb"
             />
           </LinkTo>
         </li>
