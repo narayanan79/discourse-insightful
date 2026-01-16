@@ -211,4 +211,8 @@ after_initialize do
   # every :day, at: 0.hours do
   #   InsightfulDaily.cleanup_old_records(90)
   # end
+
+  # Add user stats to serializers
+  add_to_serializer(:user_summary, :insightful_given) { object.insightful_given }
+  add_to_serializer(:user_summary, :insightful_received) { object.insightful_received }
 end
