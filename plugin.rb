@@ -5,7 +5,7 @@
 # version: 1.0.0
 # authors: Discourse Team
 # url: https://github.com/narayanan79/discourse-insightful
-# required_version: 3.5.0.beta8-dev
+# required_version: 3.5
 
 enabled_site_setting :insightful_enabled
 
