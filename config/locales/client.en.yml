@@ -12,6 +12,9 @@ en:
         insightful_received:
           one: "insightful received"
           other: "insightful received"
+        most_insightful_received_by: "Most Insightful Received By"
+        most_insightful_given_to_users: "Most Insightful Given To"
+        no_insightfuls: "No insightfuls yet"
 
     user_activity:
       no_insightful_given_title: "You haven't marked any posts as insightful yet"
