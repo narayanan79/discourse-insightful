@@ -6,6 +6,12 @@
   }
 }
 
+// Enable flexbox on the parent container for ordering
+.user-summary {
+  display: flex;
+  flex-direction: column;
+}
+
 // User summary insightful sections - user interaction lists
 .most-insightful-section {
   // Order after Actionable sections (which have order: 2)
