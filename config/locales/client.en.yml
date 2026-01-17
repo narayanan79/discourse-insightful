@@ -28,16 +28,16 @@ en:
         has_insightfuled: "You've marked this as insightful"
 
       has_insightfuls_title:
-        one: "{{count}} person marked this as insightful"
-        other: "{{count}} people marked this as insightful"
+        one: "%{count} person marked this as insightful"
+        other: "%{count} people marked this as insightful"
       has_insightfuls_title_only_you: "You marked this as insightful"
       has_insightfuls_title_you:
-        one: "You and {{count}} other person marked this as insightful"
-        other: "You and {{count}} other people marked this as insightful"
+        one: "You and %{count} other person marked this as insightful"
+        other: "You and %{count} other people marked this as insightful"
 
       actions:
         people:
           insightful: "marked this as insightful"
           insightful_capped:
-            one: "and {{count}} other marked this as insightful"
-            other: "and {{count}} others marked this as insightful"
+            one: "and %{count} other marked this as insightful"
+            other: "and %{count} others marked this as insightful"

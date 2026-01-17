@@ -13,8 +13,10 @@ class InsightfulDaily < ActiveRecord::Base
     date = Date.current
 
     # Use atomic SQL update to prevent race conditions
-    result = where(user_id: user_id, insightful_date: date)
-      .update_all("insightful_count = insightful_count + 1")
+    result =
+      where(user_id: user_id, insightful_date: date).update_all(
+        "insightful_count = insightful_count + 1",
+      )
 
     # If no record was updated, create one
     if result == 0
@@ -34,9 +36,9 @@ class InsightfulDaily < ActiveRecord::Base
     date = Date.current
 
     # Use atomic SQL update with GREATEST to prevent negative counts
-    where(user_id: user_id, insightful_date: date)
-      .where("insightful_count > 0")
-      .update_all("insightful_count = insightful_count - 1")
+    where(user_id: user_id, insightful_date: date).where("insightful_count > 0").update_all(
+      "insightful_count = insightful_count - 1",
+    )
 
     # Return the record (optional, for backward compatibility)
     find_by(user_id: user_id, insightful_date: date)

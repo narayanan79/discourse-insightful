@@ -34,14 +34,14 @@ after_initialize do
   require_relative "lib/user_summary_extension.rb"
 
   # Extend UserSummary to add insightful stats
-  reloadable_patch do |plugin|
-    ::UserSummary.prepend(DiscourseInsightful::UserSummaryExtension)
-  end
+  reloadable_patch { |plugin| ::UserSummary.prepend(DiscourseInsightful::UserSummaryExtension) }
 
   # Add UserAction constants for insightful actions
   reloadable_patch do |plugin|
+    # rubocop:disable Discourse/Plugins/NamespaceConstants
     UserAction::INSIGHTFUL_GIVEN = 20 unless UserAction.const_defined?(:INSIGHTFUL_GIVEN)
     UserAction::INSIGHTFUL_RECEIVED = 21 unless UserAction.const_defined?(:INSIGHTFUL_RECEIVED)
+    # rubocop:enable Discourse/Plugins/NamespaceConstants
   end
 
   # Add post action type for insightful using reloadable_patch
