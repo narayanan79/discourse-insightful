@@ -88,6 +88,10 @@ class InsightfulActionCreator
       target_topic_id: post.topic_id,
     )
 
+    # Update user stats counters
+    UserAction.update_like_count(guardian.user.id, UserAction::INSIGHTFUL_GIVEN, 1)
+    UserAction.update_like_count(post.user.id, UserAction::INSIGHTFUL_RECEIVED, 1)
+
     true
   rescue => e
     Rails.logger.error("Failed to create insightful action: #{e.message}")

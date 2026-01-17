@@ -61,6 +61,10 @@ class InsightfulActionDestroyer
       acting_user_id: guardian.user.id,
     ).destroy_all
 
+    # Update user stats counters (decrement)
+    UserAction.update_like_count(guardian.user.id, UserAction::INSIGHTFUL_GIVEN, -1)
+    UserAction.update_like_count(post.user.id, UserAction::INSIGHTFUL_RECEIVED, -1)
+
     true
   rescue => e
     Rails.logger.error("Failed to destroy insightful action: #{e.message}")
