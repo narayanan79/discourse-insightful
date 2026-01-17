@@ -1,7 +1,6 @@
 import Component from "@glimmer/component";
 import { LinkTo } from "@ember/routing";
 import { service } from "@ember/service";
-import { and } from "truth-helpers";
 import UserStat from "discourse/components/user-stat";
 
 export default class InsightfulStats extends Component {
@@ -9,28 +8,32 @@ export default class InsightfulStats extends Component {
 
   <template>
     {{#if this.siteSettings.insightful_enabled}}
-      {{#if @outletArgs.model.insightful_given}}
-        <li class="user-summary-stat-outlet insightful-given linked-stat">
+      {{#if @outletArgs.model.can_see_user_actions}}
+        <li class="stats-insightful-given linked-stat">
           <LinkTo @route="userActivity.insightfulGiven">
             <UserStat
               @value={{@outletArgs.model.insightful_given}}
-              @label="user.summary.insightful_given.other"
               @icon="lightbulb"
+              @label="user.summary.insightful_given"
             />
           </LinkTo>
         </li>
-      {{/if}}
-      {{#if @outletArgs.model.insightful_received}}
-        <li class="user-summary-stat-outlet insightful-received linked-stat">
-          <LinkTo @route="userActivity.insightfulReceived">
-            <UserStat
-              @value={{@outletArgs.model.insightful_received}}
-              @label="user.summary.insightful_received.other"
-              @icon="lightbulb"
-            />
-          </LinkTo>
+      {{else}}
+        <li class="stats-insightful-given">
+          <UserStat
+            @value={{@outletArgs.model.insightful_given}}
+            @icon="lightbulb"
+            @label="user.summary.insightful_given"
+          />
         </li>
       {{/if}}
+      <li class="stats-insightful-received">
+        <UserStat
+          @value={{@outletArgs.model.insightful_received}}
+          @icon="lightbulb"
+          @label="user.summary.insightful_received"
+        />
+      </li>
     {{/if}}
   </template>
 }
