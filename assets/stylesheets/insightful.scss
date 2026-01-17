@@ -8,6 +8,9 @@
 
 // User summary insightful sections - user interaction lists
 .most-insightful-section {
+  // Order after Actionable sections (which have order: 2)
+  order: 3;
+
   .summary-user-list {
     // Style the lightbulb icons in user interaction lists
     .d-icon-lightbulb {

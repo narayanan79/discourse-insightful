@@ -8,7 +8,7 @@ en:
       summary:
         insightful_given: "Insightful Given"
         insightful_received: "Insightful Received"
-        most_insightful_received_by: "Most Insightful Received By"
+        most_insightful_received_by: "Most Insightful Received From"
         most_insightful_given_to_users: "Most Insightful Given To"
         no_insightfuls: "No insightfuls yet"
 
