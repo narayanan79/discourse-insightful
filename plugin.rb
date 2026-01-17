@@ -224,24 +224,36 @@ after_initialize do
   add_to_serializer(:user_summary, :insightful_received) { object.insightful_received }
 
   # Add user summary section data
-  # Use has_many with UserSummary::UserWithCountSerializer to properly serialize the user objects
-  reloadable_patch do |plugin|
-    ::UserSummarySerializer.class_eval do
-      has_many :most_insightful_received_by_users,
-               serializer: ::UserSummary::UserWithCountSerializer,
-               embed: :object
-
-      has_many :most_insightful_given_to_users,
-               serializer: ::UserSummary::UserWithCountSerializer,
-               embed: :object
-
-      def include_most_insightful_received_by_users?
-        SiteSetting.insightful_enabled && object.most_insightful_received_by_users.present?
-      end
-
-      def include_most_insightful_given_to_users?
-        SiteSetting.insightful_enabled && object.most_insightful_given_to_users.present?
-      end
+  # Serialize as array of hashes with user data and count
+  add_to_serializer(:user_summary, :most_insightful_received_by_users) do
+    object.most_insightful_received_by_users.map do |user|
+      {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        avatar_template: User.avatar_template(user.username, user.uploaded_avatar_id),
+        count: user.count,
+      }
     end
+  end
+
+  add_to_serializer(:user_summary, :most_insightful_given_to_users) do
+    object.most_insightful_given_to_users.map do |user|
+      {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        avatar_template: User.avatar_template(user.username, user.uploaded_avatar_id),
+        count: user.count,
+      }
+    end
+  end
+
+  add_to_serializer(:user_summary, :include_most_insightful_received_by_users?) do
+    SiteSetting.insightful_enabled && object.most_insightful_received_by_users.present?
+  end
+
+  add_to_serializer(:user_summary, :include_most_insightful_given_to_users?) do
+    SiteSetting.insightful_enabled && object.most_insightful_given_to_users.present?
   end
 end
