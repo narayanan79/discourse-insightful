@@ -224,19 +224,22 @@ after_initialize do
   add_to_serializer(:user_summary, :insightful_received) { object.insightful_received }
 
   # Add user summary section data
-  add_to_serializer(:user_summary, :most_insightful_received_by_users, false) do
-    object.most_insightful_received_by_users
-  end
+  # Use has_many with UserWithCountSerializer to properly serialize the user objects
+  reloadable_patch do |plugin|
+    ::UserSummarySerializer.class_eval do
+      has_many :most_insightful_received_by_users,
+               serializer: UserWithCountSerializer,
+               embed: :object
 
-  add_to_serializer(:user_summary, :most_insightful_given_to_users, false) do
-    object.most_insightful_given_to_users
-  end
+      has_many :most_insightful_given_to_users, serializer: UserWithCountSerializer, embed: :object
 
-  add_to_serializer(:user_summary, :include_most_insightful_received_by_users?) do
-    SiteSetting.insightful_enabled && object.most_insightful_received_by_users.present?
-  end
+      def include_most_insightful_received_by_users?
+        SiteSetting.insightful_enabled && object.most_insightful_received_by_users.present?
+      end
 
-  add_to_serializer(:user_summary, :include_most_insightful_given_to_users?) do
-    SiteSetting.insightful_enabled && object.most_insightful_given_to_users.present?
+      def include_most_insightful_given_to_users?
+        SiteSetting.insightful_enabled && object.most_insightful_given_to_users.present?
+      end
+    end
   end
 end
