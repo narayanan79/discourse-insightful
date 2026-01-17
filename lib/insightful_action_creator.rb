@@ -72,6 +72,7 @@ class InsightfulActionCreator
 
     # Create UserAction records for both the giver and receiver
     # This is necessary for custom action types as PostActionCreator doesn't do this automatically
+    # Note: log_action! automatically calls update_like_count to update user_stats
     UserAction.log_action!(
       action_type: UserAction::INSIGHTFUL_GIVEN,
       user_id: guardian.user.id,
@@ -87,10 +88,6 @@ class InsightfulActionCreator
       target_post_id: post.id,
       target_topic_id: post.topic_id,
     )
-
-    # Update user stats counters
-    UserAction.update_like_count(guardian.user.id, UserAction::INSIGHTFUL_GIVEN, 1)
-    UserAction.update_like_count(post.user.id, UserAction::INSIGHTFUL_RECEIVED, 1)
 
     true
   rescue => e
