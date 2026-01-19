@@ -6,7 +6,10 @@ en:
     insightful_show_who_actioned: "Show who marked posts as insightful"
 
   post_action_types:
-    insightful: "insightful"
+    insightful:
+      title: "Insightful"
+      description: "Mark this post as insightful"
+      short_description: "Mark as insightful"
 
   activerecord:
     attributes:
