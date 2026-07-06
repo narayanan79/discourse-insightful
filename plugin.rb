@@ -47,12 +47,21 @@ after_initialize do
   # Add post action type for insightful using reloadable_patch
   reloadable_patch { |plugin| PostActionType.types[:insightful] = 51 }
 
-  PostActionType.seed do |pat|
-    pat.id = 51
-    pat.name_key = "insightful"
-    pat.is_flag = false
-    pat.icon = "lightbulb"
-    pat.position = 4
+  # Seed the DB record only on a real boot. During `assets:precompile` Discourse
+  # runs with `GlobalSetting.skip_redis?` true, so `Discourse.cache` is a bare
+  # ActiveSupport::Cache::MemoryStore. Saving a PostActionType fires core's
+  # `after_save { expire_cache }` callback, which (as of 2026.7.0) calls
+  # `Discourse.cache.redis.del(...)` — and MemoryStore has no #redis, so it
+  # raises NoMethodError and aborts the rebuild. The record is created by the
+  # db/migrate migration, so skipping the seed here is safe.
+  unless GlobalSetting.skip_redis?
+    PostActionType.seed do |pat|
+      pat.id = 51
+      pat.name_key = "insightful"
+      pat.is_flag = false
+      pat.icon = "lightbulb"
+      pat.position = 4
+    end
   end
 
   # Add insightful action summary (following like button pattern)
