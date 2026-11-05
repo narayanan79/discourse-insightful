@@ -11,8 +11,8 @@ export default class InsightfulSummarySections extends Component {
     {{#if this.siteSettings.insightful_enabled}}
       <div class="top-section most-insightful-section">
         <UserSummarySection
-          @title="most_insightful_received_by"
           class="summary-user-list insightful-received-by-section pull-left"
+          @title="most_insightful_received_by"
         >
           <UserSummaryUsersList
             @none="no_insightfuls"
@@ -20,16 +20,16 @@ export default class InsightfulSummarySections extends Component {
             as |user|
           >
             <UserSummaryUser
-              @user={{user}}
-              @icon="lightbulb"
               @countClass="insightfuls"
+              @icon="lightbulb"
+              @user={{user}}
             />
           </UserSummaryUsersList>
         </UserSummarySection>
 
         <UserSummarySection
-          @title="most_insightful_given_to_users"
           class="summary-user-list insightful-given-section pull-right"
+          @title="most_insightful_given_to_users"
         >
           <UserSummaryUsersList
             @none="no_insightfuls"
@@ -37,9 +37,9 @@ export default class InsightfulSummarySections extends Component {
             as |user|
           >
             <UserSummaryUser
-              @user={{user}}
-              @icon="lightbulb"
               @countClass="insightfuls"
+              @icon="lightbulb"
+              @user={{user}}
             />
           </UserSummaryUsersList>
         </UserSummarySection>

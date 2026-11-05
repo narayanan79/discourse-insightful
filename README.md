@@ -1,183 +1,115 @@
-# Discourse Insightful Plugin
+# Discourse Insightful
 
-A Discourse plugin that adds an "insightful" button next to the like button, allowing users to mark posts that provide valuable insights or learning moments.
+A Discourse plugin that adds an **Insightful** button next to the like button,
+so members can mark someone else's post as providing a valuable insight.
 
-## Features
+- Shows how many people marked a post, and who (optional).
+- Updates in real time for everyone viewing the topic.
+- Tracks "Insightful Given / Received" per user: profile stats, summary lists,
+  activity tabs, and optional user-directory columns.
 
-- **Insightful Button**: Lightbulb-style button with three states:
-  - Outline lightbulb (not marked)
-  - Solid lightbulb (marked)
-  - Colored solid when user has marked as insightful
-- **Count Display**: Shows number of users who marked the post as insightful
-- **Who Marked**: Click count to see avatars of users who marked as insightful
-- **Real-time Updates**: Live updates via MessageBus when others act
-- **Rate Limiting**: Configurable daily limits per user
-- **Trust Level Control**: Minimum trust level requirements
-- **Mobile Responsive**: Works on all screen sizes
-- **Accessibility**: Full keyboard navigation and screen reader support
+## Requirements
+
+- Discourse **2026.5.0 or newer**. Older sites are pinned by
+  `.discourse-compatibility` to the last commit that supported them.
+- No extra services: the plugin uses Discourse's own PostgreSQL, Redis and
+  Sidekiq.
 
 ## Installation
 
-1. Clone this repository into your Discourse plugins directory:
-   ```bash
-   cd plugins
-   git clone https://github.com/discourse/discourse-insightful.git
-   ```
+Add the plugin to your container definition (`containers/app.yml`) and rebuild:
 
-2. Rebuild Discourse:
-   ```bash
-   ./launcher rebuild app
-   ```
+```yaml
+hooks:
+  after_code:
+    - exec:
+        cd: $home/plugins
+        cmd:
+          - git clone https://github.com/narayanan79/discourse-insightful.git
+```
+
+```bash
+./launcher rebuild app
+```
+
+The rebuild runs the plugin's migrations and seed data. See
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for upgrade notes, the post-deploy
+migration, and the maintenance tasks.
 
 ## Configuration
 
-The plugin adds several site settings under Admin > Settings > Plugins:
+Admin → Settings → Plugins:
 
-- **insightful_enabled**: Enable/disable the insightful feature (default: true)
-- **insightful_max_per_day**: Maximum insightful actions per user per day (default: 50)
-- **insightful_min_trust_level**: Minimum trust level to use insightful (default: 0)
-- **insightful_show_who_insightfuled**: Show who marked posts as insightful (default: true)
+| Setting | Default | Description |
+| --- | --- | --- |
+| `insightful_enabled` | `true` | Turns the feature on or off. Turning it off also hides the plugin's directory columns. |
+| `insightful_max_per_day` | `50` | Successful marks allowed per user per day (staff are not limited). `0` blocks marking. |
+| `insightful_min_trust_level` | `0` | Minimum trust level (0–4) needed to mark posts. |
+| `insightful_show_who_actioned` | `true` | Signed-in users can see who marked a post. |
 
-## Architecture
+**Directory columns:** core creates plugin directory columns hidden. To show
+"Insightful Given" and "Insightful Received", go to Admin → Users → Directory
+columns. Turning the plugin off hides them, and turning it back on shows them again.
 
-### Backend Components
+## Behaviour
 
-- **InsightfulActionCreator**: Service object for creating insightful actions
-  - Uses Discourse's Service::Base framework
-  - Handles permissions, rate limiting, and validations
-  - Event-driven architecture (triggers :post_action_created events)
-- **InsightfulActionDestroyer**: Service object for removing insightful actions
-  - Validates user permissions before removal
-  - Maintains data consistency through event listeners
-- **InsightfulDaily**: Model for tracking daily action limits
-  - Prevents abuse through per-user daily quotas
-  - Automatic cleanup of old records
-- **InsightfulController**: API endpoints for insightful operations
-  - RESTful design with proper error handling
-  - Uses Guardian for authorization
-- **Post Action Type**: New post action type (ID: 51) for insightful
-  - Integrated with Discourse's existing post action system
+- Members can't mark their own posts, or posts in topics that are closed, archived,
+  deleted, or that they cannot see.
+- A mark can be removed within core's `post_undo_action_window_mins` (10 minutes
+  by default), like a like.
+- Marks in private messages appear on the post but are not counted in profile stats
+  or directory columns. This matches how core treats likes.
+- Anonymous visitors who click the button are sent to the login page.
+- Core's generic `/post_actions` and `/post_action_users` endpoints refuse this
+  action type, so every mark and every "who marked" lookup goes through the
+  plugin's rules.
+- With `insightful_show_who_actioned` off, real-time updates carry only the new
+  count, not who made the change.
 
-### Frontend Components
+## HTTP API
 
-- **InsightfulButton**: Main button component with animations
-  - Glimmer component with full JSDoc documentation
-  - Optimistic UI updates for instant feedback
-  - MessageBus integration for real-time updates
-  - Proper loading and disabled states
-- **InsightfulCount**: Count display and user list component
-  - Shows insightful count and user avatars
-  - Click-to-expand user list with accessibility support
-- **Post Menu Integration**: Seamless integration with existing post controls
-  - Uses Discourse's post-menu-buttons value transformer
-  - Positioned after actionable, before reply, share, and flag buttons
-- **Icon System**: Lightbulb icon for insightful actions
+All endpoints need a signed-in user and return `404` when the plugin is disabled.
 
-### Database Tables
+| Method | Path | Result |
+| --- | --- | --- |
+| `POST` | `/insightful/:post_id` | `200` with `{ success, insightful_count, insightfuled, acted, can_toggle_insightful, can_undo_insightful }`. `403` if not allowed, `404` if the post doesn't exist, `422` if already marked, `429` when the daily limit is reached, `503` in read-only mode. |
+| `DELETE` | `/insightful/:post_id` | Same body. `403` after the undo window, `404` if the post wasn't marked. |
+| `GET` | `/insightful/:post_id/who` | `{ users: [...], total_count }`, oldest first, at most 50 users. Users the viewer ignores are hidden. `403` if the post is not visible or the list is disabled. |
 
-- **insightful_daily**: Tracks daily action counts per user
-  - Indexed on user_id and insightful_date for fast queries
-  - Unique constraint prevents duplicate entries
-- **posts.insightful_count**: Denormalized count for performance
-  - Updated via event listeners to avoid N+1 queries
-  - Indexed for efficient sorting and filtering
-- **post_actions**: Uses existing table with insightful post action type
-  - Leverages Discourse's built-in post action infrastructure
-- **user_stats**: Extended with insightful_given and insightful_received columns
-- **directory_items**: Includes insightful statistics for user directory
+The plugin's own errors use `{ success: false, errors: ["…"] }`. The `429`,
+the `503` and the disabled-plugin `404` come from Discourse core in its standard
+error format (`{ errors: [...], error_type: ... }`).
 
-## API Endpoints
+## Events for other plugins
 
-- `POST /insightful/:post_id` - Mark post as insightful
-- `DELETE /insightful/:post_id` - Remove insightful from post
-- `GET /insightful/:post_id/who` - Get users who marked the post as insightful
+| Event | Arguments |
+| --- | --- |
+| `:insightful_created` | `post_action`, acting `user` |
+| `:insightful_destroyed` | `post_action`, acting `user` |
 
-## Events
+The events fire after the database transaction commits.
 
-The plugin triggers Discourse events that other plugins can listen to:
-
-- `insightful_created` - When a post is marked as insightful
-- `insightful_destroyed` - When insightful is removed from a post
-
-## Styling
-
-The plugin includes comprehensive CSS with support for:
-
-- Dark mode
-- High contrast mode
-- Mobile responsive design
-- Animation effects
-- Accessibility focus styles
-
-## Code Quality
-
-This plugin follows Discourse best practices and coding standards:
-
-- ✅ **Zero RuboCop offenses** - All Ruby code passes strict linting
-- ✅ **Service-based architecture** - Uses Discourse's Service::Base framework
-- ✅ **Event-driven design** - Single source of truth via event listeners
-- ✅ **Performance optimized** - Denormalized counts, indexed queries, no N+1 issues
-- ✅ **Security hardened** - Guardian integration, rate limiting, input validation
-- ✅ **Accessibility compliant** - ARIA labels, keyboard navigation support
-
-## Testing
-
-Run the plugin tests:
+## Maintenance tasks
 
 ```bash
-bundle exec rspec plugins/discourse-insightful/spec
+./launcher enter app
+rake insightful:recalculate_stats       # repair user_stats / posts counters
+rake insightful:backfill_user_actions   # recreate missing activity rows
 ```
-
-The plugin includes comprehensive test coverage:
-- Service object specs (InsightfulActionCreator, InsightfulActionDestroyer)
-- Controller specs with error handling
-- Model specs for InsightfulDaily
-- System specs for UI interactions
-- Integration tests for real-time updates
-
-## License
-
-MIT License - see LICENSE file for details.
 
 ## Development
 
-### Starting the Development Environment
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) and [docs/TESTING.md](docs/TESTING.md).
+Architecture notes are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), and the
+security model is in [docs/SECURITY.md](docs/SECURITY.md).
 
-```bash
-# Start Rails server
-RAILS_ENV=development bin/rails server -p 3000 -b 0.0.0.0
+## Companion plugin
 
-# Start Ember server (in another terminal)
-pnpm ember s --proxy http://localhost:3000
-```
+[discourse-actionable](https://github.com/narayanan79/discourse-actionable)
+uses separate identifiers (post action type 50, user actions 18/19), so the two
+plugins can run together.
 
-Access the application at http://localhost:4200
+## License
 
-### Code Style
-
-This plugin follows Discourse coding standards:
-- Run `bundle exec rubocop -A` to auto-fix Ruby linting issues
-- Add JSDoc comments to all JavaScript classes, methods, and getters
-- Follow the service object pattern for business logic
-- Use event listeners in plugin.rb for cross-cutting concerns
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass and code is linted
-6. Submit a pull request
-
-### Pull Request Checklist
-
-- [ ] All RuboCop offenses resolved (`bundle exec rubocop`)
-- [ ] JSDoc comments added for new JavaScript code
-- [ ] Tests added and passing (`bundle exec rspec`)
-- [ ] No console.log or debug statements in production code
-- [ ] README updated if adding new features
-
-## Companion Plugin
-
-This plugin works great alongside the **discourse-actionable** plugin, which allows users to mark posts as requiring action. Together, they provide a comprehensive system for community-driven content curation.
+The project is intended to be MIT-licensed. Note that the repository does not
+yet contain a `LICENSE` file.
