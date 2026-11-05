@@ -5,17 +5,22 @@ class FixInsightfulDailyTable < ActiveRecord::Migration[7.0]
     # Drop the incorrectly named table if it exists
     drop_table :insightful_dailies if table_exists?(:insightful_dailies)
 
-    # Create the correctly named table if it doesn't exist
+    # Create the correctly named table if it doesn't exist. No foreign key on
+    # user_id: it blocked deleting users (see CreateInsightfulDailyTable).
     unless table_exists?(:insightful_daily)
       create_table :insightful_daily do |t|
-        t.references :user, null: false, foreign_key: true
+        t.bigint :user_id, null: false
         t.date :insightful_date, null: false
         t.integer :insightful_count, default: 0, null: false
         t.timestamps
       end
 
-      add_index :insightful_daily, [:user_id, :insightful_date], unique: true, name: 'index_insightful_daily_on_user_id_and_date'
-      add_index :insightful_daily, :insightful_date, name: 'index_insightful_daily_on_date'
+      add_index :insightful_daily, :user_id
+      add_index :insightful_daily,
+                %i[user_id insightful_date],
+                unique: true,
+                name: "index_insightful_daily_on_user_id_and_date"
+      add_index :insightful_daily, :insightful_date, name: "index_insightful_daily_on_date"
     end
   end
 
@@ -31,7 +36,7 @@ class FixInsightfulDailyTable < ActiveRecord::Migration[7.0]
         t.timestamps
       end
 
-      add_index :insightful_dailies, [:user_id, :given_date], unique: true
+      add_index :insightful_dailies, %i[user_id given_date], unique: true
     end
   end
 end
