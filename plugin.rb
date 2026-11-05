@@ -33,6 +33,7 @@ after_initialize do
   require_relative "lib/post_serializer_extension"
   require_relative "lib/user_action_extension"
   require_relative "lib/user_summary_extension"
+  require_relative "lib/users_controller_extension"
   require_relative "lib/insightful_action_creator"
   require_relative "lib/insightful_action_destroyer"
   require_relative "controllers/insightful_controller"
@@ -55,6 +56,7 @@ after_initialize do
     ::PostSerializer.prepend(DiscourseInsightful::PostSerializerExtension)
     ::UserAction.singleton_class.prepend(DiscourseInsightful::UserActionExtension)
     ::UserSummary.prepend(DiscourseInsightful::UserSummaryExtension)
+    ::UsersController.prepend(DiscourseInsightful::UsersControllerExtension)
 
     # Kept for code written against earlier versions of the plugin.
     # rubocop:disable Discourse/Plugins/NamespaceConstants
