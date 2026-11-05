@@ -1,4 +1,4 @@
-// Post menu button: outline when not insightfuled, highlighted when insightfuled.
+// Post menu button: outline when not marked, gold when marked as insightful.
 .post-action-menu__insightful-count,
 .post-action-menu__insightful {
   &.insightful {
@@ -10,7 +10,7 @@
       background: var(--tertiary-low);
 
       .d-icon {
-        color: var(--tertiary);
+        color: var(--gold);
       }
     }
   }
@@ -33,14 +33,14 @@
 
   &.has-insightful.insightful-by-me {
     .d-icon {
-      color: var(--tertiary);
+      color: var(--gold);
     }
 
     &:hover {
       background: var(--tertiary-low);
 
       .d-icon {
-        color: var(--tertiary);
+        color: var(--gold);
       }
     }
   }
@@ -86,7 +86,7 @@
 
 .post-action-menu__insightful-count {
   &.my-insightfuls {
-    color: var(--tertiary);
+    color: var(--gold);
   }
 
   &.regular-insightfuls {
@@ -184,7 +184,7 @@
 .stats-insightful-received {
   .user-stat .d-icon,
   .user-stat .d-icon-lightbulb {
-    color: var(--tertiary) !important;
+    color: var(--gold) !important;
   }
 }
 
@@ -212,7 +212,7 @@
 
 .most-insightful-section {
   .summary-user-list .d-icon-lightbulb {
-    color: var(--tertiary) !important;
+    color: var(--gold) !important;
     filter: drop-shadow(0 0 1px var(--tertiary-low));
     transition:
       color 0.2s ease,
@@ -222,8 +222,8 @@
   .insightful-received-by-section,
   .insightful-given-section {
     .user-summary-user:hover .d-icon-lightbulb {
-      color: var(--tertiary-high) !important;
-      filter: drop-shadow(0 0 2px var(--tertiary));
+      color: var(--gold) !important;
+      filter: drop-shadow(0 0 2px var(--tertiary-low));
     }
   }
 }
@@ -232,19 +232,19 @@
 .directory-table__column-header,
 .table-header-toggle {
   .d-icon-lightbulb {
-    color: var(--tertiary) !important;
+    color: var(--gold) !important;
     filter: drop-shadow(0 0 2px var(--tertiary-low));
   }
 
   &:hover .d-icon-lightbulb {
-    color: var(--tertiary-hover) !important;
+    color: var(--gold) !important;
     filter: drop-shadow(0 0 3px var(--tertiary-low));
   }
 }
 
 .users-directory .directory-table .d-icon-lightbulb,
 .responsive-table .d-icon-lightbulb {
-  color: var(--tertiary) !important;
+  color: var(--gold) !important;
   filter: drop-shadow(0 0 2px var(--tertiary-low));
   transition:
     color 0.2s ease,
